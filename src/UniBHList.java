@@ -67,9 +67,9 @@ public class UniBHList<T extends Comparable<T>> {
         return aux;
     }
 
-    public boolean removeByValue(T value) {
+    public boolean removeByValue(T value) throws Exception {
         if (firstNode == null) {
-            return false;
+            throw new Exception("Value not present");
         }
         if (firstNode.getValue().equals(value)) {
             firstNode = firstNode.getNext();
@@ -81,14 +81,14 @@ public class UniBHList<T extends Comparable<T>> {
             currentNode = currentNode.getNext();
         }
         if (currentNode.getNext() == null) {
-            return false;
+            throw new Exception("Value not present");
         }
         currentNode.setNext(currentNode.getNext().getNext());
         totalElements--;
         return true;
     }
 
-    public boolean search(T value) {
+    public boolean search(T value) throws Exception {
         Node<T> currentNode = firstNode;
         while (currentNode != null) {
             if (currentNode.getValue().equals(value)) {
@@ -96,7 +96,58 @@ public class UniBHList<T extends Comparable<T>> {
             }
             currentNode = currentNode.getNext();
         }
-        return false;
+        throw new Exception("Item not found");
+    }
+
+    public boolean isEmpty() {
+        return totalElements == 0;
+    }
+
+    public void insertAfter(int index, T value) throws Exception {
+        if (index < 0 || index >= totalElements) {
+            throw new Exception("Index out of bounds");
+        }
+        Node<T> newNode = new Node<>(value);
+        Node<T> currentNode = firstNode;
+        for (int i = 0; i < index; i++) {
+            currentNode = currentNode.getNext();
+        }
+        newNode.setNext(currentNode.getNext());
+        currentNode.setNext(newNode);
+        totalElements++;
+    }
+
+    public Node<T> removeAt(int index) throws Exception {
+        if (index < 0 || index >= totalElements) {
+            throw new Exception("Index out of bounds");
+        }
+        if (index == 0) {
+            return removeAtBeginning();
+        }
+        Node<T> currentNode = firstNode;
+        for (int i = 0; i < index - 1; i++) {
+            currentNode = currentNode.getNext();
+        }
+        Node<T> aux = currentNode.getNext();
+        currentNode.setNext(currentNode.getNext().getNext());
+        totalElements--;
+        return aux;
+    }
+
+    public int size() {
+        return totalElements;
+    }
+
+    public void modifyElement(T oldValue, T newValue) throws Exception {
+        Node<T> currentNode = firstNode;
+        while (currentNode != null) {
+            if (currentNode.getValue().equals(oldValue)) {
+                currentNode.setValue(newValue);
+                return;
+            }
+            currentNode = currentNode.getNext();
+        }
+        throw new Exception("Element not found");
     }
 
     @Override
@@ -124,4 +175,29 @@ public class UniBHList<T extends Comparable<T>> {
     // Design the other list methods.
     // Insert at the end, in order, remove at the end,
     // remove elements by value, search an element.
+}
+
+class Node<T> {
+    private T value;
+    private Node<T> next;
+
+    public Node(T value) {
+        this.value = value;
+    }
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+
+    public Node<T> getNext() {
+        return next;
+    }
+
+    public void setNext(Node<T> next) {
+        this.next = next;
+    }
 }
